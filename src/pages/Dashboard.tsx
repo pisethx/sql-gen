@@ -130,7 +130,12 @@ export default function Dashboard() {
                                 placeholder="INSERT INTO table_name (column1, column2, column3) VALUES (value1, value2, value3);"
                                 className="min-h-[150px] font-mono text-sm"
                                 value={originalQuery}
-                                onChange={(e) => setOriginalQuery(e.target.value)}
+                                onChange={(e) => {
+                                    setSelectedFields([])
+                                    setFieldValues({})
+                                    setNumCopies(1)
+                                    setOriginalQuery(e.target.value)
+                                }}
                             />
 
                             {extractedFields && (
