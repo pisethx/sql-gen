@@ -25,21 +25,61 @@ export default function Dashboard() {
                 .replace(/--.*$/gm, '') // Remove single line comments
                 .replace(/\/\*[\s\S]*?\*\//gm, ''); // Remove multi-line comments
 
-            const matches = queryWithoutComments.match(/insert\s+into\s+(\w+)\s*\(([\s\S]*?)\)\s*values\s*\(([\s\S]*?)\)/i);
+            // Match the INSERT statement with a more robust regex that handles multi-line values
+            const matches = queryWithoutComments.match(/insert\s+into\s+(["\w\.]+)\s*\(([\s\S]*?)\)\s*values\s*\(([\s\S]*?)(?=\)\s*(?:;|$))/i);
             if (!matches) return null;
 
             const tableName = matches[1];
             const columns = matches[2].split(',').map(col => col.trim());
-            const values = matches[3].split(',').map(val => val.trim().replace(/^['"]|['"]$/g, ''));
+
+            // Parse values more carefully to handle nested parentheses and quotes
+            let valuesStr = matches[3];
+            const values: string[] = [];
+            let currentValue = '';
+            let inQuote = false;
+            let quoteChar = '';
+            let parenthesesCount = 0;
+
+            for (let i = 0; i < valuesStr.length; i++) {
+                const char = valuesStr[i];
+
+                if ((char === "'" || char === '"') && valuesStr[i - 1] !== '\\') {
+                    if (!inQuote) {
+                        inQuote = true;
+                        quoteChar = char;
+                    } else if (char === quoteChar) {
+                        inQuote = false;
+                    }
+                }
+
+                if (!inQuote) {
+                    if (char === '(') parenthesesCount++;
+                    if (char === ')') parenthesesCount--;
+                }
+
+                if (!inQuote && parenthesesCount === 0 && char === ',') {
+                    values.push(currentValue.trim());
+                    currentValue = '';
+                } else {
+                    currentValue += char;
+                }
+            }
+            values.push(currentValue.trim());
+
+            // Clean up the values
+            const cleanedValues = values.map(val =>
+                val.trim().replace(/^['"]|['"]$/g, '')
+            );
 
             return {
                 tableName,
                 fields: columns.map((column, index) => ({
                     column,
-                    value: values[index] || ''
+                    value: cleanedValues[index] || ''
                 }))
             };
         } catch (e) {
+            console.error('Error parsing SQL:', e);
             return null;
         }
     }, [originalQuery]);
@@ -58,7 +98,12 @@ export default function Dashboard() {
             });
 
             const columns = allFields.map(f => f.column).join(', ');
-            const values = allFields.map(f => `'${f.value}'`).join(', ');
+            const values = allFields.map(f => {
+                // Escape single quotes and wrap in quotes
+                const escapedValue = f.value.replace(/'/g, "''");
+                return `'${escapedValue}'`;
+            }).join(', ');
+
             queries.push(`INSERT INTO ${extractedFields.tableName} (${columns}) VALUES (${values});`);
         }
 
@@ -123,7 +168,7 @@ export default function Dashboard() {
                                                 {Array.from({ length: numCopies }).map((_, index) => (
                                                     <div key={index} className="grid gap-2">
                                                         <Label className="text-sm text-muted-foreground">{fieldName} (Copy {index + 1})</Label>
-                                                        <Input
+                                                        <Textarea
                                                             value={fieldValues[fieldName]?.[index] ?? field?.value ?? ''}
                                                             onChange={(e) => {
                                                                 setFieldValues(prev => {
