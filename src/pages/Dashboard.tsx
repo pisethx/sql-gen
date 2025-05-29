@@ -99,10 +99,8 @@ export default function Dashboard() {
 
             const columns = allFields.map(f => f.column).join(', ');
             const values = allFields.map(f => {
-                // Check if value is a function call (e.g. TO_TIMESTAMP, NOW, etc)
-                if (/^[A-Z_]+\s*\(.*\)$/.test(f.value.toUpperCase()) ||
-                    /^[A-Z_]+\s*\(\)$/.test(f.value.toUpperCase()) ||
-                    /^[A-Z_]+$/.test(f.value.toUpperCase())) {
+                // Check if value is a function call like TO_TIMESTAMP
+                if (f.value.toUpperCase().startsWith('TO_TIMESTAMP(')) {
                     return f.value;
                 }
                 // Otherwise escape single quotes and wrap in quotes
