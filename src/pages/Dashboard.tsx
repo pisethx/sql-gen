@@ -66,16 +66,22 @@ export default function Dashboard() {
             }
             values.push(currentValue.trim());
 
-            // Clean up the values
-            const cleanedValues = values.map(val =>
-                val.trim().replace(/^['"]|['"]$/g, '')
-            );
+            // Clean up the values and determine if they are numbers based on quotes
+            const cleanedValues = values.map(val => {
+                const trimmed = val.trim();
+                const hasQuotes = /^['"].*['"]$/.test(trimmed);
+                return {
+                    value: trimmed.replace(/^['"]|['"]$/g, ''),
+                    isNumber: !hasQuotes && trimmed.toUpperCase() !== 'NULL' && !trimmed.toUpperCase().startsWith('TO_TIMESTAMP(')
+                };
+            });
 
             return {
                 tableName,
                 fields: columns.map((column, index) => ({
                     column,
-                    value: cleanedValues[index] || ''
+                    value: cleanedValues[index]?.value || '',
+                    isNumber: cleanedValues[index]?.isNumber || false
                 }))
             };
         } catch (e) {
@@ -93,7 +99,8 @@ export default function Dashboard() {
                 const newValues = fieldValues[field.column];
                 return {
                     column: field.column,
-                    value: newValues?.[i] !== undefined ? newValues[i] : field.value
+                    value: newValues?.[i] !== undefined ? newValues[i] : field.value,
+                    isNumber: field.isNumber
                 };
             });
 
@@ -103,6 +110,15 @@ export default function Dashboard() {
                 if (f.value.toUpperCase().startsWith('TO_TIMESTAMP(')) {
                     return f.value;
                 }
+                // Check if value is NULL
+                if (f.value.toUpperCase() === 'NULL') {
+                    return 'NULL';
+                }
+                // If it's a number, don't wrap in quotes
+                if (f.isNumber) {
+                    return f.value;
+                }
+
                 // Otherwise escape single quotes and wrap in quotes
                 const escapedValue = f.value.replace(/'/g, "''");
                 return `'${escapedValue}'`;
@@ -184,6 +200,7 @@ export default function Dashboard() {
                                                                 <Label className="text-sm text-muted-foreground font-light shrink-0">{fieldName}</Label>
                                                                 <Input
                                                                     key={fieldName}
+                                                                    type={field?.isNumber ? "number" : "text"}
                                                                     value={fieldValues[fieldName]?.[index] ?? field?.value ?? ''}
                                                                     placeholder={fieldName ?? ''}
                                                                     onChange={(e) => {
