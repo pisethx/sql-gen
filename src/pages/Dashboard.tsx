@@ -99,7 +99,13 @@ export default function Dashboard() {
 
             const columns = allFields.map(f => f.column).join(', ');
             const values = allFields.map(f => {
-                // Escape single quotes and wrap in quotes
+                // Check if value is a function call (e.g. TO_TIMESTAMP, NOW, etc)
+                if (/^[A-Z_]+\s*\(.*\)$/.test(f.value.toUpperCase()) ||
+                    /^[A-Z_]+\s*\(\)$/.test(f.value.toUpperCase()) ||
+                    /^[A-Z_]+$/.test(f.value.toUpperCase())) {
+                    return f.value;
+                }
+                // Otherwise escape single quotes and wrap in quotes
                 const escapedValue = f.value.replace(/'/g, "''");
                 return `'${escapedValue}'`;
             }).join(', ');
