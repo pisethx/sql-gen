@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:gh": "tsc -b && cross-env VITE_BASE_URL=/react-shadcn-starter/ VITE_USE_HASH_ROUTE=true vite build"
+    "build:gh": "tsc -b && cross-env VITE_BASE_URL=/sql-gen/ VITE_USE_HASH_ROUTE=true vite build"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
