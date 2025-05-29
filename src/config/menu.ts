@@ -2,6 +2,7 @@ import {
     CircleAlert,
     Files,
     Gauge,
+    HomeIcon,
     LucideIcon
 } from 'lucide-react'
 
@@ -16,28 +17,8 @@ type MenuType = MenuItemType[]
 
 export const mainMenu: MenuType = [
     {
-        title: 'Dashboard',
+        title: 'Home',
         url: '/',
-        icon: Gauge
-    },
-    {
-        title: 'Pages',
-        url: '/pages',
-        icon: Files,
-        items: [
-            {
-                title: 'Sample Page',
-                url: '/pages/sample',
-            },
-            {
-                title: 'Coming Soon',
-                url: '/pages/feature',
-            },
-        ]
-    },
-    {
-        title: 'Error',
-        url: '/404',
-        icon: CircleAlert,
-    },
+        icon: HomeIcon
+    }, 
 ]

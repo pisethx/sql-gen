@@ -117,17 +117,17 @@ export default function Dashboard() {
     return (
         <>
             <PageHeader>
-                <PageHeaderHeading>SQL Query Modifier</PageHeaderHeading>
+                <PageHeaderHeading>SQL Gen</PageHeaderHeading>
             </PageHeader>
             <Card>
                 <CardHeader>
                     <CardTitle>Modify SQL Query</CardTitle>
-                    <CardDescription>Paste your INSERT query and create multiple modified versions</CardDescription>
+                    <CardDescription>Paste your INSERT query here...</CardDescription>
 
                     <div className="space-y-4">
                         <div className="grid gap-4">
                             <Textarea
-                                placeholder="Paste your INSERT query here..."
+                                placeholder="INSERT INTO table_name (column1, column2, column3) VALUES (value1, value2, value3);"
                                 className="min-h-[150px] font-mono text-sm"
                                 value={originalQuery}
                                 onChange={(e) => setOriginalQuery(e.target.value)}
@@ -142,7 +142,7 @@ export default function Dashboard() {
                                                 type="number"
                                                 min={1}
                                                 value={numCopies}
-                                                onChange={(e) => setNumCopies(Math.max(1, parseInt(e.target.value) || 1))}
+                                                onChange={(e) => setNumCopies(parseInt(e.target.value))}
                                                 className="w-24"
                                             />
                                         </div>
@@ -163,33 +163,42 @@ export default function Dashboard() {
                                 </>
                             )}
 
-                            {selectedFields.length > 0 && extractedFields && (
-                                <div className="grid gap-6">
-                                    {selectedFields.map((fieldName) => {
-                                        const field = extractedFields.fields.find(f => f.column === fieldName);
-                                        return (
-                                            <div key={fieldName} className="grid gap-4">
-                                                {Array.from({ length: numCopies }).map((_, index) => (
-                                                    <div key={index} className="grid gap-2">
-                                                        <Label className="text-sm text-muted-foreground">{fieldName} (Copy {index + 1})</Label>
-                                                        <Textarea
-                                                            value={fieldValues[fieldName]?.[index] ?? field?.value ?? ''}
-                                                            onChange={(e) => {
-                                                                setFieldValues(prev => {
-                                                                    const newValues = [...(prev[fieldName] || [])];
-                                                                    newValues[index] = e.target.value;
-                                                                    return {
-                                                                        ...prev,
-                                                                        [fieldName]: newValues
-                                                                    };
-                                                                });
-                                                            }}
-                                                        />
-                                                    </div>
-                                                ))}
+                            {selectedFields.length > 0 && extractedFields && numCopies && (
+                                <div className="space-y-4 overflow-x-auto pb-6">
+                                    {Array.from({ length: numCopies }).map((_, index) => (
+                                        <div className="">
+                                            <div key={index} className="flex gap-4 items-center">
+                                                <div className="text-sm text-muted-foreground font-medium w-6 shrink-0 flex items-center">
+                                                    #{index + 1}
+                                                </div>
+                                                <div className="flex gap-4 min-w-fit">
+                                                    {selectedFields.map((fieldName) => {
+                                                        const field = extractedFields.fields.find(f => f.column === fieldName);
+                                                        return (
+                                                            <div className="w-[200px]">
+                                                                <Label className="text-sm text-muted-foreground font-light shrink-0">{fieldName}</Label>
+                                                                <Input
+                                                                    key={fieldName}
+                                                                    value={fieldValues[fieldName]?.[index] ?? field?.value ?? ''}
+                                                                    placeholder={fieldName ?? ''}
+                                                                    onChange={(e) => {
+                                                                        setFieldValues(prev => {
+                                                                            const newValues = [...(prev[fieldName] || [])];
+                                                                            newValues[index] = e.target.value;
+                                                                            return {
+                                                                                ...prev,
+                                                                                [fieldName]: newValues
+                                                                            };
+                                                                        });
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
-                                        );
-                                    })}
+                                        </div>
+                                    ))}
                                 </div>
                             )}
 
@@ -210,7 +219,7 @@ export default function Dashboard() {
                                     </div>
                                     <Textarea
                                         readOnly
-                                        className="min-h-[200px] font-mono text-sm"
+                                        className="min-h-[100px] font-mono text-sm"
                                         value={generateModifiedQueries}
                                         placeholder="Modified queries will appear here..."
                                     />
