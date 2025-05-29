@@ -11,7 +11,7 @@ type AppConfigType = {
 }
 
 export const appConfig: AppConfigType = {
-    name: import.meta.env.VITE_APP_NAME ?? "Sample App",
+    name: import.meta.env.VITE_APP_NAME ?? "SQL Gen",
     github: {
         title: "SQL Gen",
         url: "https://github.com/pisethx/sql-gen",
