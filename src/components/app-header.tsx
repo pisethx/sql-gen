@@ -104,21 +104,19 @@ export function AppHeader() {
                                     className='relative h-8 w-8 rounded-full cursor-pointer ml-2'>
                                     <Avatar className='h-8 w-8'>
                                         <AvatarImage src={baseUrl + '/avatars/shadcn.jpg'} alt='shadcn' />
-                                        <AvatarFallback className="rounded-lg">SC</AvatarFallback>
+                                        <AvatarFallback className="rounded-lg">P</AvatarFallback>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className='w-56' align='end' forceMount>
                                 <DropdownMenuLabel className='font-normal'>
                                     <div className='flex flex-col space-y-1'>
-                                        <p className='text-sm font-medium leading-none'>shadcn</p>
+                                        <p className='text-sm font-medium leading-none'>Piseth</p>
                                         <p className='text-xs leading-none text-muted-foreground'>
-                                            m@example.com
+                                            Frontend Developer
                                         </p>
                                     </div>
                                 </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>Log out</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </nav>
