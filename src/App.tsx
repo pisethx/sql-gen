@@ -1,4 +1,4 @@
-import { BrowserRouter, HashRouter } from 'react-router'
+import { BrowserRouter, HashRouter } from 'react-router-dom'
 import { ThemeProvider } from './contexts/ThemeContext'
 import Router from './Router'
 

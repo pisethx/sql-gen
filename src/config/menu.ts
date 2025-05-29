@@ -1,10 +1,4 @@
-import {
-    CircleAlert,
-    Files,
-    Gauge,
-    HomeIcon,
-    LucideIcon
-} from 'lucide-react'
+import { HomeIcon, LucideIcon } from 'lucide-react'
 
 type MenuItemType = {
     title: string
