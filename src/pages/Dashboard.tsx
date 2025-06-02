@@ -1,11 +1,11 @@
 import { PageHeader, PageHeaderHeading } from "@/components/page-header";
+import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useState, useMemo } from "react";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useEffect, useMemo, useState } from 'react';
 
 export default function Dashboard() {
     const [originalQuery, setOriginalQuery] = useState('');
@@ -90,6 +90,12 @@ export default function Dashboard() {
         }
     }, [originalQuery]);
 
+    useEffect(() => {
+        if (extractedFields) {
+            setSelectedFields([extractedFields.fields[0].column]);
+        }
+    }, [extractedFields]);
+
     const generateModifiedQueries = useMemo(() => {
         if (!extractedFields) return '';
 
@@ -113,6 +119,10 @@ export default function Dashboard() {
                 // Check if value is NULL
                 if (f.value.toUpperCase() === 'NULL') {
                     return 'NULL';
+                }
+                // Check if value is SYSDATE
+                if (f.value.toUpperCase() === 'SYSDATE') {
+                    return 'SYSDATE';
                 }
                 // If it's a number, don't wrap in quotes
                 if (f.isNumber) {
