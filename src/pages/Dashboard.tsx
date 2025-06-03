@@ -13,6 +13,7 @@ export default function Dashboard() {
     const [fieldValues, setFieldValues] = useState<Record<string, string[]>>({});
     const [numCopies, setNumCopies] = useState(1);
     const [copied, setCopied] = useState(false);
+    const [downloaded, setDownloaded] = useState(false);
 
     const extractedFields = useMemo(() => {
         if (!originalQuery.trim().toLowerCase().startsWith('insert')) {
@@ -238,6 +239,23 @@ export default function Dashboard() {
                                 <div className="grid gap-2">
                                     <div className="flex justify-end">
                                         <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={async () => {
+                                                const blob = new Blob([generateModifiedQueries], { type: 'text/plain' });
+                                                const url = URL.createObjectURL(blob);
+                                                const a = document.createElement('a');
+                                                a.href = url;
+                                                a.download = `mock-${new Date().toISOString()}.sql`;
+                                                a.click();
+                                                setDownloaded(true);
+                                                setTimeout(() => setDownloaded(false), 2000);
+                                            }}
+                                        >
+                                            {downloaded ? "Downloaded!" : "Download as txt"}
+                                        </Button>
+                                        <Button
+                                            className="ml-2"
                                             variant="outline"
                                             size="sm"
                                             onClick={async () => {
