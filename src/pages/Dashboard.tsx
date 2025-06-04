@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Textarea } from "@/components/ui/textarea";
+import { sqlBuiltIns, sqlFunctions } from "@/config/constant";
 import { useEffect, useMemo, useState } from 'react';
 
 export default function Dashboard() {
@@ -113,44 +114,14 @@ export default function Dashboard() {
 
             const columns = allFields.map(f => f.column).join(', ');
             const values = allFields.map(f => {
-                // Check for SQL function calls
-                if (/^[A-Z_]+\(.*\)$/.test(f.value.toUpperCase())) {
+                // Check if value is a function calls
+                const value = f.value.toUpperCase();
+
+                if (sqlFunctions.some(func => value.startsWith(func + '(') || value === func)) {
                     return f.value;
                 }
-                // Check for SQL built-in functions, keywords and constants
-                const sqlBuiltIns = [
-                    'NULL',
-                    'SYSDATE',
-                    'CURRENT_TIMESTAMP',
-                    'CURRENT_DATE',
-                    'CURRENT_TIME',
-                    'USER',
-                    'SYSTIMESTAMP',
-                    'LOCALTIMESTAMP',
-                    'LOCALTIME',
-                    'CURRENT_USER',
-                    'SESSION_USER',
-                    'SYSTEM_USER',
-                    'TRUE',
-                    'FALSE',
-                    'UNKNOWN',
-                    'DEFAULT',
-                    'CURRENT',
-                    'CURRENT_DATE',
-                    'CURRENT_TIME',
-                    'CURRENT_TIMESTAMP',
-                    'CURRENT_USER',
-                    'SESSION_USER',
-                    'SYSTEM_USER',
-                    'USER',
-                    'CURRENT_SCHEMA',
-                    'CURRENT_PATH',
-                    'CURRENT_ROLE',
-                    'CURRENT_CATALOG',
-                    'CURRENT_DEFAULT_TRANSFORM_GROUP',
-                    'CURRENT_TRANSFORM_GROUP_FOR_TYPE'
-                ];
 
+                // Check for SQL built-in functions, keywords and constants
                 if (sqlBuiltIns.includes(f.value.toUpperCase())) {
                     return f.value.toUpperCase();
                 }
