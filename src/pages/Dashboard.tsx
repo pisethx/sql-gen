@@ -113,17 +113,46 @@ export default function Dashboard() {
 
             const columns = allFields.map(f => f.column).join(', ');
             const values = allFields.map(f => {
-                // Check if value is a function call like TO_TIMESTAMP
-                if (f.value.toUpperCase().startsWith('TO_TIMESTAMP(')) {
+                // Check for SQL function calls
+                if (/^[A-Z_]+\(.*\)$/.test(f.value.toUpperCase())) {
                     return f.value;
                 }
-                // Check if value is NULL
-                if (f.value.toUpperCase() === 'NULL') {
-                    return 'NULL';
-                }
-                // Check if value is SYSDATE
-                if (f.value.toUpperCase() === 'SYSDATE') {
-                    return 'SYSDATE';
+                // Check for SQL built-in functions, keywords and constants
+                const sqlBuiltIns = [
+                    'NULL',
+                    'SYSDATE',
+                    'CURRENT_TIMESTAMP',
+                    'CURRENT_DATE',
+                    'CURRENT_TIME',
+                    'USER',
+                    'SYSTIMESTAMP',
+                    'LOCALTIMESTAMP',
+                    'LOCALTIME',
+                    'CURRENT_USER',
+                    'SESSION_USER',
+                    'SYSTEM_USER',
+                    'TRUE',
+                    'FALSE',
+                    'UNKNOWN',
+                    'DEFAULT',
+                    'CURRENT',
+                    'CURRENT_DATE',
+                    'CURRENT_TIME',
+                    'CURRENT_TIMESTAMP',
+                    'CURRENT_USER',
+                    'SESSION_USER',
+                    'SYSTEM_USER',
+                    'USER',
+                    'CURRENT_SCHEMA',
+                    'CURRENT_PATH',
+                    'CURRENT_ROLE',
+                    'CURRENT_CATALOG',
+                    'CURRENT_DEFAULT_TRANSFORM_GROUP',
+                    'CURRENT_TRANSFORM_GROUP_FOR_TYPE'
+                ];
+
+                if (sqlBuiltIns.includes(f.value.toUpperCase())) {
+                    return f.value.toUpperCase();
                 }
                 // If it's a number, don't wrap in quotes
                 if (f.isNumber) {
