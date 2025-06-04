@@ -5,8 +5,7 @@ React + Vite + TypeScript template for building apps with shadcn/ui.
 ## Getting Started
 
 ```bash
-npx degit hayyi2/react-shadcn-starter my-project
-cd my-project
+cd sql-gen
 npm install
 npm run dev
 ```
@@ -32,9 +31,7 @@ npm run dev
 - Comment on `workflow_dispatch`
 - Uncomment on `push`
 
-```yaml
-# on:
-#   workflow_dispatch:
+```yaml 
 on:
   push:
     branches: ["main"]

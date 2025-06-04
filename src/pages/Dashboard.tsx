@@ -117,7 +117,7 @@ export default function Dashboard() {
                 // Check if value is a function calls
                 const value = f.value.toUpperCase();
 
-                if (sqlFunctions.some(func => value.startsWith(func + '(') || value === func)) {
+                if (sqlFunctions.some(func => value.startsWith(func + '('))) {
                     return f.value;
                 }
 
