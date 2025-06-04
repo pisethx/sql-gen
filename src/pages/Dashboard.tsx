@@ -74,7 +74,10 @@ export default function Dashboard() {
                 const hasQuotes = /^['"].*['"]$/.test(trimmed);
                 return {
                     value: trimmed.replace(/^['"]|['"]$/g, ''),
-                    isNumber: !hasQuotes && trimmed.toUpperCase() !== 'NULL' && !trimmed.toUpperCase().startsWith('TO_TIMESTAMP(')
+                    isNumber: !hasQuotes &&
+                        trimmed.toUpperCase() !== 'NULL' &&
+                        !sqlFunctions.some(func => trimmed.toUpperCase().startsWith(func + '(')) &&
+                        !sqlBuiltIns.some(builtIn => trimmed.toUpperCase() === builtIn)
                 };
             });
 
