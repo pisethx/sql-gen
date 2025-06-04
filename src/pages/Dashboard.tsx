@@ -116,15 +116,18 @@ export default function Dashboard() {
             const values = allFields.map(f => {
                 // Check if value is a function calls
                 if (sqlFunctions.some(func => f.value.toUpperCase().startsWith(func + '('))) {
+                    console.log('sqlFunctions', f.value)
                     return f.value;
                 }
 
                 // Check for SQL built-in functions, keywords and constants
                 if (sqlBuiltIns.some(builtIn => f.value.toUpperCase() === builtIn)) {
+                    console.log('sqlBuiltIns', f.value)
                     return f.value.toUpperCase();
                 }
                 // If it's a number, don't wrap in quotes
                 if (f.isNumber) {
+                    console.log('isNumber', f.value)
                     return f.value;
                 }
 
