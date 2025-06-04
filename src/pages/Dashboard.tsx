@@ -74,10 +74,7 @@ export default function Dashboard() {
                 const hasQuotes = /^['"].*['"]$/.test(trimmed);
                 return {
                     value: trimmed.replace(/^['"]|['"]$/g, ''),
-                    isNumber: !hasQuotes &&
-                        trimmed.toUpperCase() !== 'NULL' &&
-                        !sqlFunctions.some(func => trimmed.toUpperCase().startsWith(func + '(')) &&
-                        !sqlBuiltIns.some(builtIn => trimmed.toUpperCase() === builtIn)
+                    isNumber: !hasQuotes && !isNaN(Number(trimmed)) && trimmed !== '',
                 };
             });
 
