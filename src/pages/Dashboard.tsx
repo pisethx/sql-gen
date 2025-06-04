@@ -115,14 +115,12 @@ export default function Dashboard() {
             const columns = allFields.map(f => f.column).join(', ');
             const values = allFields.map(f => {
                 // Check if value is a function calls
-                const value = f.value.toUpperCase();
-
-                if (sqlFunctions.some(func => value.startsWith(func + '('))) {
+                if (sqlFunctions.some(func => f.value.toUpperCase().startsWith(func + '('))) {
                     return f.value;
                 }
 
                 // Check for SQL built-in functions, keywords and constants
-                if (sqlBuiltIns.includes(f.value.toUpperCase())) {
+                if (sqlBuiltIns.some(builtIn => f.value.toUpperCase() === builtIn)) {
                     return f.value.toUpperCase();
                 }
                 // If it's a number, don't wrap in quotes
